@@ -118,10 +118,31 @@ public class Practice {
    * @return a sorted list of all reachable vertex values
    */
   public static List<Integer> sortedReachable(Map<Integer, Set<Integer>> graph, int starting) {
-    return null;
-  }
+    List<Integer> sorted = new ArrayList<>();
+    if (!graph.containsKey(starting)) return sorted;
 
-  
+    Set<Integer> visited = new HashSet<>();
+    Queue<Integer> queue = new LinkedList<>();
+
+    queue.add(starting);
+    while (!queue.isEmpty()) {
+        int current = queue.poll();
+        
+        if (!visited.contains(current)) {
+            sorted.add(current);
+            visited.add(current);
+        }
+
+        for (Integer number : graph.get(current)) {
+            if (!visited.contains(number)) {
+                queue.add(number);
+            }
+        }
+    }
+
+    Collections.sort(sorted);
+    return sorted;
+  } 
 
   /**
    * Returns true if and only if it is possible both to reach v2 from v1 and to reach v1 from v2.
