@@ -1,5 +1,10 @@
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
 public class Practice {
@@ -24,8 +29,36 @@ public class Practice {
    * @param starting the starting vertex (may be null)
    * @return the number of vertices with odd values reachable from the starting vertex
    */
+
   public static int oddVertices(Vertex<Integer> starting) {
-    return 0;
+    int count = 0;
+
+    if (starting == null) return count;
+
+    Set<Vertex<Integer>> visited = new HashSet<>();
+    Queue<Vertex<Integer>> queue = new LinkedList<>();
+    queue.add(starting);
+
+    while (!queue.isEmpty()) {
+        Vertex<Integer> current = queue.poll();
+
+        if (current != null && !visited.contains(current)) {
+            visited.add(current);
+            
+            if (current.data % 2 != 0) count++;
+            
+            if (current.neighbors != null && !current.neighbors.isEmpty()) {
+                for (Vertex<Integer> vertex : current.neighbors) {
+                    if (!visited.contains(vertex)) {
+                        queue.add(vertex);
+                    }
+                }
+            }
+        }
+    }
+
+
+    return count;
   }
 
   /**
@@ -47,7 +80,31 @@ public class Practice {
    * @return a sorted list of all reachable vertex values by 
    */
   public static List<Integer> sortedReachable(Vertex<Integer> starting) {
-    return null;
+    List<Integer> sorted = new ArrayList<>();
+
+    if (starting == null) return sorted;
+
+    Set<Vertex<Integer>> visited = new HashSet<>();
+
+    sortedReachable(starting, sorted, visited);
+
+    Collections.sort(sorted);
+    
+    return sorted;
+  }
+
+  public static void sortedReachable(Vertex<Integer> current, List<Integer> sorted, Set<Vertex<Integer>> visited) {
+    if (current == null || visited.contains(current)) return;
+
+    sorted.add(current.data);
+    visited.add(current);
+
+    for (Vertex<Integer> neighbor : current.neighbors) {
+        if (!visited.contains(neighbor)) {
+            sortedReachable(neighbor, sorted, visited);
+        }
+    }
+    
   }
 
   /**
@@ -63,6 +120,8 @@ public class Practice {
   public static List<Integer> sortedReachable(Map<Integer, Set<Integer>> graph, int starting) {
     return null;
   }
+
+  
 
   /**
    * Returns true if and only if it is possible both to reach v2 from v1 and to reach v1 from v2.
