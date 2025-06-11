@@ -159,6 +159,31 @@ public class Practice {
    * @return true if there is a two-way connection between v1 and v2, false otherwise
    */
   public static <T> boolean twoWay(Vertex<T> v1, Vertex<T> v2) {
+    if (v1 == null || v2 == null) return false;
+    if (v1 == v2) return true;
+
+    Set<Vertex<T>> firstPath = new HashSet<>();
+    boolean canReachFirst = twoWayHelper(v1, v2, firstPath);
+    
+    Set<Vertex<T>> secondPath = new HashSet<>();
+    boolean canReachSecond = twoWayHelper(v2, v1, secondPath);
+    
+    if (canReachFirst && canReachSecond) return true;
+    
+    return false;
+  }
+
+  public static <T> boolean twoWayHelper(Vertex<T> current, Vertex<T> goal, Set<Vertex<T>> visited) {
+    if (current == goal) return true;
+    if (current == null || visited.contains(current)) return false;
+
+    visited.add(current);
+    for (Vertex<T> vertex : current.neighbors) {
+        if (!visited.contains(vertex)) {
+            if (twoWayHelper(vertex, goal, visited)) return true;
+        }
+    }
+
     return false;
   }
 
@@ -175,9 +200,27 @@ public class Practice {
    * @return whether there exists a valid positive path from starting to ending
    */
   public static boolean positivePathExists(Map<Integer, Set<Integer>> graph, int starting, int ending) {
-    return false;
+    if (starting < 0 || ending < 0 || !graph.containsKey(starting) || !graph.containsKey(ending)) return false;
+    if (starting == ending) return true;
+
+    Set<Integer> visited = new HashSet<>();
+
+    return positivePathExists(graph, starting, ending, visited);
   }
 
+  public static boolean positivePathExists(Map<Integer, Set<Integer>> graph, int starting, int ending, Set<Integer> visited) {
+    if (starting < 0 || ending < 0 || !graph.containsKey(starting) || !graph.containsKey(ending) || visited.contains(starting)) return false;
+    if (starting == ending) return true;
+
+    visited.add(starting);
+    for (int num : graph.get(starting)) {
+        if (!visited.contains(num)) {
+            if (positivePathExists(graph, num, ending, visited)) return true;
+        }
+    }
+    
+    return false;
+  }
   /**
    * Returns true if a professional has anyone in their extended network (reachable through any number of links)
    * that works for the given company. The search includes the professional themself.
